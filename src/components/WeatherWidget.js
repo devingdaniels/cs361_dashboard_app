@@ -1,6 +1,13 @@
-import { useState, useEffect } from "react";
-
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import Snowfall from "react-snowfall";
+import { toastify } from "../toastify/toastify";
+import {
+  get_coordinates,
+  get_city_by_coords,
+  fetch_weather_by_city,
+  get_random_city,
+} from "../utils/fetchWeatherApi";
 
 function WeatherWidget() {
   const navigate = useNavigate();
@@ -11,64 +18,84 @@ function WeatherWidget() {
     temp: null,
     info: null,
     humidity: null,
+    units: null,
   });
-
-  const code_this_function = () => {
-    alert("Useing user location to determine local wearther...");
-  };
-
-  const make_API_call = async (e) => {
-    // Set search param
-    let searchParam = cityParam;
-    if (!searchParam) {
-      searchParam = "New York";
-    } else {
-      // User submitted form, prevent page reload
-      e.preventDefault();
-    }
-    try {
-      const key = process.env.REACT_APP_WEATHER_API_KEY;
-      const reponse = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?q=${searchParam}&appid=${key}&units=imperial`
-      );
-      // Parse
-      const json = await reponse.json();
-      // Set data
-      const data = {
-        city: searchParam,
-        temp: json.main.temp,
-        humidy: json.main.humidity,
-        info: json.weather[0].description,
-      };
-      // Update state of data
-      setData(data);
-      // Reset input field
-      setCityParam("");
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  // On initial render, load default city
+  const userCoords = useRef({
+    lat: null,
+    lon: null,
+  });
+  const [loading, setLoading] = useState(false);
+  // On initial render, try to load based on user location
   useEffect(() => {
-    if (!cityParam) {
-      make_API_call();
+    if (userCoords.current.lat === null) {
+      // Retrieve and set the user's coordinates
+      fetch_weather_with_coords();
     }
   }, []);
 
-  // Render
+  const fetch_weather_with_coords = async () => {
+    // Making network calls, rending loading
+    setLoading(true);
+    toastify("Loading...");
+    try {
+      const coords = await get_coordinates();
+      userCoords.current = {
+        lat: coords.lat,
+        lon: coords.lon,
+      };
+    } catch (error) {
+      console.log(error);
+      userCoords.current = {
+        lat: false,
+        lon: false,
+      };
+    }
+    // Load default city if user denied location services
+    if (userCoords.current.lat === false) {
+      let randomCity = await get_random_city();
+      if (!randomCity) {
+        randomCity = "New York";
+      }
+      const data = await fetch_weather_by_city(randomCity);
+      setData(data);
+      setLoading(false);
+    }
+    // User allowed location services
+    else {
+      const city = await get_city_by_coords(userCoords.current);
+      const data = await fetch_weather_by_city(city);
+      setData(data);
+      setLoading(false);
+    }
+  };
+
+  const fetch_weather_search = async (e) => {
+    // Prevent default page reload
+    e.preventDefault();
+    // Show spinner
+    setLoading(true);
+    try {
+      const data = await fetch_weather_by_city(cityParam);
+      setData(data);
+    } catch (error) {
+      toastify("Bad Input. Try again.");
+      console.log(error);
+    }
+    setLoading(false);
+    setCityParam("");
+  };
 
   return (
     <section>
-      <button className="nav-button" onClick={() => navigate("/")}>
-        Dashboard
-      </button>
       <div className="widget-container">
+        <button className="dashboardNavBut" onClick={() => navigate("/")}>
+          Dashboard
+        </button>
         <div className="widget-header">
           <h2>Weather</h2>
         </div>
-        <p className="widget-label">Search by city name or current location</p>
-        <form onSubmit={make_API_call}>
+        <p className="widget-label">Enter City or Zip</p>
+        <form onSubmit={fetch_weather_search}>
           <input
             type="text"
             placeholder="Eugene..."
@@ -78,18 +105,32 @@ function WeatherWidget() {
           ></input>
           <button type="submit">Search</button>
         </form>
-        <button onClick={code_this_function}>Use my location</button>
-        <span className="enable-location-services">
-          *Requires browser location services
-        </span>
+        <button onClick={fetch_weather_with_coords}>Use my location</button>
+        <span className="enable-location-services">*Requires Permission</span>
         <hr></hr>
-        <p>Location: {data.city}</p>
-        <p>Description: {data.info}</p>
-        <p>Temperature: {data.temp} F</p>
-        <p>Humidity: {data.humidy}</p>
+        {loading ? (
+          <>
+            <Snowfall snowflakeCount={100} />
+          </>
+        ) : (
+          <>
+            <p>{data.city}</p>
+            <p>
+              {String(data.info).charAt(0).toUpperCase() +
+                String(data.info).slice(1)}
+            </p>
+            <p>
+              <b>Temperature: </b>
+              {data.temp}
+            </p>
+            <p>
+              <b>Humidity: </b>
+              {data.humidity}
+            </p>
+          </>
+        )}
       </div>
     </section>
   );
 }
-
 export default WeatherWidget;
