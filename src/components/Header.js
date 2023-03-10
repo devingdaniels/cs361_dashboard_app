@@ -6,7 +6,10 @@ import WidgetIcon from "../images/menu.png";
 function Header() {
   const navigate = useNavigate();
   const handleLogout = () => {
-    alert("Logging out user...");
+    window.open(
+      "https://github.com/devingdaniels/cs361_dashboard_app",
+      "_blank" // <- This is what makes it open in a new window.
+    );
   };
 
   const style = {
@@ -19,7 +22,7 @@ function Header() {
       <img onClick={() => navigate("/")} src={WidgetIcon} style={style}></img>
       <h1>WidgetWorld</h1>
       <button className="logoutButton" onClick={handleLogout}>
-        Logout
+        Source Code
       </button>
     </header>
   );

@@ -3,7 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import Header from "./components/Header";
 import Dashboard from "./components/Dashboard";
 import WeatherWidget from "./components/WeatherWidget";
-import StockWidget from "./components/StockWidget";
+import PromptGPT from "./components/PromptGPT";
 
 function App() {
   return (
@@ -12,7 +12,8 @@ function App() {
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/weather" element={<WeatherWidget />} />
-        <Route path="/stocks" element={<StockWidget />} />
+        <Route path="/prompt" element={<PromptGPT />} />
+        <Route path="/image" element={<WeatherWidget />} />
       </Routes>
     </>
   );

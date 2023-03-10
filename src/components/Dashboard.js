@@ -8,8 +8,8 @@ function Dashboard() {
         <Link to="/weather">
           <h3>Weather</h3>
         </Link>
-        <Link to="/stocks">
-          <h3>Stocks</h3>
+        <Link to="/prompt">
+          <h3>Prompt</h3>
         </Link>
       </nav>
       <Outlet />

@@ -11,7 +11,7 @@ import {
 
 function WeatherWidget() {
   const navigate = useNavigate();
-  // Component State variables
+  const [loading, setLoading] = useState(false);
   const [cityParam, setCityParam] = useState("");
   const [data, setData] = useState({
     city: null,
@@ -24,7 +24,7 @@ function WeatherWidget() {
     lat: null,
     lon: null,
   });
-  const [loading, setLoading] = useState(false);
+
   // On initial render, try to load based on user location
   useEffect(() => {
     if (userCoords.current.lat === null) {
@@ -50,7 +50,7 @@ function WeatherWidget() {
         lon: false,
       };
     }
-    // Load default city if user denied location services
+    // Load random city if user denied location services
     if (userCoords.current.lat === false) {
       let randomCity = await get_random_city();
       if (!randomCity) {
@@ -70,9 +70,7 @@ function WeatherWidget() {
   };
 
   const fetch_weather_search = async (e) => {
-    // Prevent default page reload
     e.preventDefault();
-    // Show spinner
     setLoading(true);
     try {
       const data = await fetch_weather_by_city(cityParam);
