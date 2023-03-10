@@ -34,14 +34,16 @@ app.post("/api/prompt", async (req, res) => {
 
 app.post("/api/image", async (req, res) => {
   const { prompt } = req.body;
+  console.log(prompt);
+  res.send("jsjs");
+  return;
   try {
     const response = await openai.createImage({
-      prompt: "a white siamese cat",
+      prompt: prompt,
       n: 1,
-      size: "1024x1024",
+      size: "256x256",
     });
-    image_url = response.data.data[0];
-    res.json({ text: data });
+    res.json({ text: response.data.data[0].url });
   } catch (error) {
     console.log(error);
   }

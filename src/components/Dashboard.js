@@ -9,7 +9,10 @@ function Dashboard() {
           <h3>Weather</h3>
         </Link>
         <Link to="/prompt">
-          <h3>Prompt</h3>
+          <h3>PromptGPT</h3>
+        </Link>
+        <Link to="/image">
+          <h3>ImageGPT</h3>
         </Link>
       </nav>
       <Outlet />
