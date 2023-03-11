@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Snowfall from "react-snowfall";
 import { toastify } from "../toastify/toastify";
+import WeatherData from "./WeatherData";
 import {
   get_coordinates,
   get_city_by_coords,
@@ -84,50 +85,35 @@ function WeatherWidget() {
   };
 
   return (
-    <section>
-      <div className="widget-container">
-        <button className="dashboardNavBut" onClick={() => navigate("/")}>
-          Dashboard
-        </button>
-        <div className="widget-header">
-          <h2>Weather</h2>
-        </div>
-        <p className="widget-label">Enter City or Zip</p>
-        <form onSubmit={fetch_weather_search}>
-          <input
-            type="text"
-            placeholder="Eugene..."
-            onChange={(e) => setCityParam(e.target.value)}
-            value={cityParam}
-            required
-          ></input>
-          <button type="submit">Search</button>
-        </form>
+    <section className="weather-widget">
+      <button className="dashboardNavBut" onClick={() => navigate("/")}>
+        Dashboard
+      </button>
+
+      <div className="widget-header">
+        <h2>Weather</h2>
+      </div>
+      <p className="widget-label">Enter City or Zip</p>
+      <form onSubmit={fetch_weather_search}>
+        <input
+          type="text"
+          placeholder="Eugene..."
+          onChange={(e) => setCityParam(e.target.value)}
+          value={cityParam}
+          required
+        ></input>
+        <button type="submit">Search</button>
+      </form>
+      <div className="location-services">
         <button onClick={fetch_weather_with_coords}>Use my location</button>
         <span className="enable-location-services">*Requires Permission</span>
-        <hr></hr>
-        {loading ? (
-          <>
-            <Snowfall snowflakeCount={100} />
-          </>
-        ) : (
-          <>
-            <p>{data.city}</p>
-            <p>
-              {String(data.info).charAt(0).toUpperCase() +
-                String(data.info).slice(1)}
-            </p>
-            <p>
-              <b>Temperature: </b>
-              {data.temp}
-            </p>
-            <p>
-              <b>Humidity: </b>
-              {data.humidity}
-            </p>
-          </>
-        )}
       </div>
+      <hr></hr>
+      {loading ? (
+        <Snowfall snowflakeCount={100} />
+      ) : (
+        <WeatherData data={data}></WeatherData>
+      )}
     </section>
   );
 }

@@ -34,9 +34,6 @@ app.post("/api/prompt", async (req, res) => {
 
 app.post("/api/image", async (req, res) => {
   const { prompt } = req.body;
-  console.log(prompt);
-  res.send("jsjs");
-  return;
   try {
     const response = await openai.createImage({
       prompt: prompt,

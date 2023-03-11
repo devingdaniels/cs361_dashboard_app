@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { InfinitySpin } from "react-loader-spinner";
 import { toastify } from "../toastify/toastify";
+import DisplayResponse from "./DisplayResponse";
 
 function GPTprompt() {
   const navigate = useNavigate();
@@ -36,31 +37,39 @@ function GPTprompt() {
   };
 
   return (
-    <div className="widget-container">
+    <div className="gpt-container">
       <button className="dashboardNavBut" onClick={() => navigate("/")}>
         Dashboard
       </button>
-      <div className="widget-header">
-        <h2>Prompt GPT</h2>
+      <div>
+        <div className="widget-header">
+          <h2>Prompt GPT</h2>
+        </div>
+        <p className="widget-label">Enter a short prompt</p>
+        <form onSubmit={handleSubmit}>
+          <textarea
+            minLength={1}
+            type="text"
+            rows={5}
+            style={{ padding: "6px", margin: "3px" }}
+            value={prompt}
+            onChange={(e) => setData(e.target.value)}
+            placeholder="Prompt..."
+            required
+          ></textarea>
+          <button type="submit">Submit</button>
+        </form>
       </div>
-      <p className="widget-label">Enter a short prompt</p>
-      <button onClick={clearResponse}>Clear Response</button>
-      <form onSubmit={handleSubmit}>
-        <textarea
-          type="text"
-          value={prompt}
-          onChange={(e) => setData(e.target.value)}
-          placeholder="Prompt..."
-        ></textarea>
-        <button type="submit">Submit</button>
-      </form>
       {loading ? (
         <>
           <InfinitySpin width="200" color="#4fa94d"></InfinitySpin>
         </>
       ) : (
         <>
-          <p>{response}</p>
+          <DisplayResponse
+            response={response}
+            clearResponse={clearResponse}
+          ></DisplayResponse>
         </>
       )}
     </div>
