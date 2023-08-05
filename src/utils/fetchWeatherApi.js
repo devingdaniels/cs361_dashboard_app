@@ -29,7 +29,6 @@ const get_city_by_coords = async (coords) => {
     // Returns name of city
     const json = await reponse.json();
     const city = json[0].name;
-
     return city;
   } catch (error) {
     console.log(error);

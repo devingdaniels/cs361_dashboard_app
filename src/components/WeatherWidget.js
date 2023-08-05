@@ -15,11 +15,11 @@ function WeatherWidget() {
   const [loading, setLoading] = useState(false);
   const [cityParam, setCityParam] = useState("");
   const [data, setData] = useState({
-    city: null,
-    temp: null,
-    info: null,
-    humidity: null,
-    units: null,
+    city: "",
+    temp: "",
+    info: "",
+    humidity: "",
+    units: "",
   });
   const userCoords = useRef({
     lat: null,
@@ -30,14 +30,14 @@ function WeatherWidget() {
   useEffect(() => {
     if (userCoords.current.lat === null) {
       // Retrieve and set the user's coordinates
-      fetch_weather_with_coords();
+      getWeatherByRandomCity();
     }
   }, []);
 
   const fetch_weather_with_coords = async () => {
-    // Making network calls, rending loading
+    // Making network calls, render loading component
     setLoading(true);
-    toastify("Loading...");
+    // Determine status of location services
     try {
       const coords = await get_coordinates();
       userCoords.current = {
@@ -51,26 +51,18 @@ function WeatherWidget() {
         lon: false,
       };
     }
-    // Load random city if user denied location services
+    // User disabled location services
     if (userCoords.current.lat === false) {
-      let randomCity = await get_random_city();
-      if (!randomCity) {
-        randomCity = "New York";
-      }
-      const data = await fetch_weather_by_city(randomCity);
-      setData(data);
-      setLoading(false);
+      toastify("Location services disabled, fetching by random city.");
+      getWeatherByRandomCity();
     }
-    // User allowed location services
+    // User enabled location services
     else {
-      const city = await get_city_by_coords(userCoords.current);
-      const data = await fetch_weather_by_city(city);
-      setData(data);
-      setLoading(false);
+      getWeatherByUserCoords(userCoords);
     }
   };
 
-  const fetch_weather_search = async (e) => {
+  const getWeatherFromSearchParam = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
@@ -84,6 +76,24 @@ function WeatherWidget() {
     setCityParam("");
   };
 
+  const getWeatherByRandomCity = async () => {
+    setLoading(true);
+    let randomCity = await get_random_city();
+    if (!randomCity) {
+      randomCity = "New York";
+    }
+    const data = await fetch_weather_by_city(randomCity);
+    setData(data);
+    setLoading(false);
+  };
+
+  const getWeatherByUserCoords = async () => {
+    const city = await get_city_by_coords(userCoords.current);
+    const data = await fetch_weather_by_city(city);
+    setData(data);
+    setLoading(false);
+  };
+
   return (
     <section className="weather-widget">
       <button className="dashboardNavBut" onClick={() => navigate("/")}>
@@ -94,7 +104,7 @@ function WeatherWidget() {
         <h2>Weather</h2>
       </div>
       <p className="widget-label">Enter City or Zip</p>
-      <form onSubmit={fetch_weather_search}>
+      <form onSubmit={getWeatherFromSearchParam}>
         <input
           type="text"
           placeholder="Eugene..."

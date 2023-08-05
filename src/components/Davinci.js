@@ -5,15 +5,15 @@ import { InfinitySpin } from "react-loader-spinner";
 import { toastify } from "../toastify/toastify";
 import DisplayResponse from "./DisplayResponse";
 
-function GPTprompt() {
+function Davinci() {
   const navigate = useNavigate();
   const [prompt, setData] = useState("");
   const [response, setResponse] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
+    // Prevent page reload
     e.preventDefault();
-
     if (prompt === "") {
       toastify("Empty prompt, please try again");
     } else {
@@ -24,16 +24,13 @@ function GPTprompt() {
         });
         const data = response.data;
         setResponse(data.text);
-        setLoading(false);
       } catch (error) {
         console.log(error);
+        alert("Check backend error log");
       }
       setData("");
+      setLoading(false);
     }
-  };
-
-  const clearResponse = () => {
-    setResponse("");
   };
 
   return (
@@ -43,9 +40,9 @@ function GPTprompt() {
       </button>
       <div>
         <div className="widget-header">
-          <h2>Prompt GPT</h2>
+          <h2>Davinci</h2>
         </div>
-        <p className="widget-label">Enter a short prompt</p>
+        <p className="widget-label">Ask Davinci Anything</p>
         <form onSubmit={handleSubmit}>
           <textarea
             minLength={1}
@@ -54,8 +51,7 @@ function GPTprompt() {
             style={{ padding: "6px", margin: "3px" }}
             value={prompt}
             onChange={(e) => setData(e.target.value)}
-            placeholder="Prompt..."
-            required
+            placeholder="Example: Tell me a cookie recipe, what does React.js useEffect do, how many cups in a gallon"
           ></textarea>
           <button type="submit">Submit</button>
         </form>
@@ -68,7 +64,7 @@ function GPTprompt() {
         <>
           <DisplayResponse
             response={response}
-            clearResponse={clearResponse}
+            clearResponse={() => setResponse("")}
           ></DisplayResponse>
         </>
       )}
@@ -76,4 +72,4 @@ function GPTprompt() {
   );
 }
 
-export default GPTprompt;
+export default Davinci;

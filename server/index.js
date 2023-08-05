@@ -23,26 +23,10 @@ app.post("/api/prompt", async (req, res) => {
       temperature: 0,
       max_tokens: 500,
     });
-    const data = response.data.choices[0].text;
-    console.log(response.data);
-    console.log(data);
-    res.json({ text: data });
+    const text = response.data.choices[0].text;
+    res.json({ data: text });
   } catch (error) {
-    console.log(error);
-  }
-});
-
-app.post("/api/image", async (req, res) => {
-  const { prompt } = req.body;
-  try {
-    const response = await openai.createImage({
-      prompt: prompt,
-      n: 1,
-      size: "256x256",
-    });
-    res.json({ text: response.data.data[0].url });
-  } catch (error) {
-    console.log(error);
+    res.sendStatus(error.response.status);
   }
 });
 

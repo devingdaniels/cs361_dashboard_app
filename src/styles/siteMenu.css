@@ -53,12 +53,13 @@ Note: Beware of modifying this element as it can break the animations - you shou
 .bm-item-list {
   display: flex;
   flex-direction: column;
-  justify-content: start;
+  justify-content: flex-start;
 }
 
 /* Individual item */
 .bm-item {
   display: inline-block;
+  text-align: center;
 }
 
 /* Styling of overlay */
@@ -71,14 +72,15 @@ Note: Beware of modifying this element as it can break the animations - you shou
   padding: 10px 20px;
   border: 2px solid #333;
   border-radius: 5px;
-  background-color: #fff;
+  background-color: #b8b4b4;
   color: #333;
   text-decoration: none;
-  font-size: 16px;
+  font-size: 24px;
   font-weight: bold;
   cursor: pointer;
   transition: all 0.3s ease-in-out;
   margin: 15px;
+  
 }
 
 .ham-nav-buttons:hover {

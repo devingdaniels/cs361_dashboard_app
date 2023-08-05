@@ -1,6 +1,4 @@
-// Routing\
-import { Link, Outlet } from "react-router-dom";
-import "../App.css";
+import { Link } from "react-router-dom";
 
 function Dashboard() {
   return (
@@ -10,10 +8,9 @@ function Dashboard() {
           <h3>Weather</h3>
         </Link>
         <Link to="/prompt" className="a">
-          <h3>PromptGPT</h3>
+          <h3>Davinci</h3>
         </Link>
       </nav>
-      <Outlet />
     </>
   );
 }

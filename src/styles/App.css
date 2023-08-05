@@ -185,6 +185,7 @@ input[type="text"]:focus {
 
 .weather-data > p {
     padding: 10px;
+    text-align: left;
 }
 
 /*-------------------- CHAT GPT WIDGET --------------------  */
